@@ -19,7 +19,6 @@ class Threads extends React.Component {
     }
   }
 
-
   render () {
     // These will not exist for users who aren't authorized to view them
     const note = this.props.threads.find(t => t.type === 'note');
@@ -70,11 +69,10 @@ class Threads extends React.Component {
          >
          </textarea>
             <button
-             disabled={this.newMessageField.value === ''}
              className='button button--large button--base'
              onClick={() => {
-                 this.props.create(visibleThread.id, this.newMessageField.value);
-                 this.newMessageField.value = '';
+               this.props.create(visibleThread.id, this.newMessageField.value);
+               this.newMessageField.value = '';
              }
                      }>Comment</button>
             </div>
