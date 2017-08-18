@@ -11,8 +11,8 @@ import c from 'classnames';
 
 import PageHeader from '../components/page-header';
 import PageFooter from '../components/page-footer';
-
-import { fetchProfile } from '../actions';
+import { fetchProfile, removeErrors } from '../actions';
+import ErrorModal from '../components/error-modal';
 
 // Top-level application component
 // Just contains header, footer, and container for actual views
@@ -25,7 +25,10 @@ var App = React.createClass({
     dispatch: T.func,
     profile: T.object,
     route: T.object,
-    roles: T.array
+    roles: T.array,
+    secret: T.string,
+    router: T.object,
+    error: T.object
   },
 
   componentDidMount: function () {
@@ -46,6 +49,18 @@ var App = React.createClass({
           profile={this.props.profile}
         />
         <main className="page__body" role="main">
+        <div style={{display: this.props.error.isErrorModalVisible ? 'block' : 'none'}}>
+          <ErrorModal
+            onLogout={() => {
+              this.props.dispatch(removeErrors());
+              this.props.router.push('/logout');
+            }}
+            onClose={() => {
+              this.props.dispatch(removeErrors());
+            }}
+            errorMsg={this.props.error.errorMsg}
+        />
+        </div>
           {this.props.children}
         </main>
         <PageFooter className={c({hidden})} />
@@ -61,7 +76,9 @@ const mapStateToProps = state => {
   return {
     dispatch: state.dispatch,
     roles: state.auth.roles,
-    profile: state.auth.profile
+    profile: state.auth.profile,
+    secret: state.auth.secret,
+    error: state.errors
   };
 };
 
