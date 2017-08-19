@@ -29,7 +29,7 @@ import {
 } from '../actions';
 
 import { ticketStatusLUT } from '../constants';
-import { formatDate, formatTicketTitle } from '../utils/format';
+import { formatDate } from '../utils/format';
 import CreateEditGrouping from '../components/create-edit-grouping';
 import SelectServiceProvider from '../components/select-service-provider';
 import TicketEdit from '../components/ticket-edit';
@@ -159,7 +159,7 @@ var TicketSingle = React.createClass({
           }
           <header className='ticket__header'>
           <div className='ticket__header--content'>
-            <h1 className='ticket__title'>{`Ticket ${formatTicketTitle(ticket.id)}`}</h1>
+            <h1 className='ticket__title'>{`${ticket.title}`}</h1>
             <p className='ticket__description'>{`created on ${formatDate(ticket.created_at)} by ${ticket.created_by}`}</p>
           </div>
           <ul className='ticket__header--actions'>
