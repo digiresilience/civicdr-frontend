@@ -212,12 +212,12 @@ export const removeGroupingFromTicket = (ticketID, groupingID) => {
   return dispatch => {
     request(`/tickets/${ticketID}/groupings/${groupingID}`, 'delete')
       .then(() => dispatch(removeTicketGrouping(groupingID)))
-    .catch(function (err) { dispatch(checkErrors(err)); });
+      .catch(function (err) { dispatch(checkErrors(err)); });
   };
 };
 
-export const updateTicketSP = (serviceProviderID) => {
-  return {type: UPDATE_TICKET_SP, data: { serviceProviderID }};
+export const updateTicketSP = (serviceProviderInfo) => {
+  return {type: UPDATE_TICKET_SP, data: serviceProviderInfo};
 };
 
 export const assignSPToTicket = (ticketID, serviceProviderID) => {
@@ -231,12 +231,16 @@ export const assignSPToTicket = (ticketID, serviceProviderID) => {
           : Promise.resolve(null);
       })
       .then(() => request(`/tickets/${ticketID}/sp_profiles/${serviceProviderID}`, 'post'))
+      .then(() => request(`/tickets/${ticketID}`, 'get'))
       // Update the store
-      .then(() => {
-        dispatch(updateTicketSP(serviceProviderID));
+      .then(res => {
+        dispatch(updateTicketSP({
+          sp_assigned_id: res.data.sp_assigned_id,
+          ticket_sp_contact: res.data.ticket_sp_contact,
+          ticket_sp_name: res.data.ticket_sp_name}));
         dispatch(fetchTicketThreads(ticketID));
       })
-    .catch(function (err) { dispatch(checkErrors(err)); });
+      .catch(function (err) { dispatch(checkErrors(err)); });
   };
 };
 

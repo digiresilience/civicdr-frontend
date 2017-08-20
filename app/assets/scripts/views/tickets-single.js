@@ -56,7 +56,8 @@ var TicketSingle = React.createClass({
     serviceProviders: T.array,
     implementingPartners: T.array,
     threads: T.array,
-    router: T.object
+    router: T.object,
+    profile: T.object
   },
 
   getInitialState: function () {
@@ -87,6 +88,7 @@ var TicketSingle = React.createClass({
 
   render: function () {
     const ticket = this.props.ticket;
+    const hasProfile = Boolean(this.props.profile.name);
     const serviceProvider = this.props.serviceProviders
       .find(sp => sp.id === ticket.sp_assigned_id);
     let roles = this.props.roles;
@@ -109,6 +111,7 @@ var TicketSingle = React.createClass({
               roles={roles}
               existingTicket={ticket}
               implementingPartners={this.props.implementingPartners}
+              profile={hasProfile ? this.props.profile : {}}
             />
           </div>
 
@@ -131,7 +134,7 @@ var TicketSingle = React.createClass({
                     this.props.dispatch(createGroupingAndAddToTicket(title, description, this.props.ticket.id));
                     this.setState({isCreateGroupingModalVisible: false});
                   }}
-                  />
+                />
               </div>
 
               <div style={{display: this.state.isDeleteModalVisible ? 'block' : 'none'}}>
@@ -141,7 +144,7 @@ var TicketSingle = React.createClass({
                     this.props.dispatch(deleteTickets([this.props.ticket.id], () => this.props.router.push('/')));
                     this.setState({isDeleteModalVisible: false});
                   }}
-                  />
+                />
               </div>
 
               <div style={{display: this.state.isDuplicationModalVisible ? 'block' : 'none'}}>
@@ -152,85 +155,91 @@ var TicketSingle = React.createClass({
                     this.setState({isDuplicationModalVisible: false});
                   }}
                   implementingPartners={this.props.implementingPartners}
-                  />
+                />
               </div>
             </div>
             : ''
           }
           <header className='ticket__header'>
-          <div className='ticket__header--content'>
-            <h1 className='ticket__title'>{`${ticket.title}`}</h1>
-            <p className='ticket__description'>{`created on ${formatDate(ticket.created_at)} by ${ticket.created_by}`}</p>
-          </div>
-          <ul className='ticket__header--actions'>
-            { isAdmin ? <li className='ticket__actions-item'><button className='button button--primary' onClick={() => this.setState({isDeleteModalVisible: true})}>Delete</button></li> : '' }
-            { isAdmin ? <li className='ticket__actions-item'><button className='button button--secondary-bounded' onClick={() => this.setState({isDuplicationModalVisible: true})}>Duplicate Ticket</button></li> : '' }
-            <li className='ticket__actions-item'><button className='button button--base' onClick={() => this.setState({isEditTicketModalVisible: true})}>Edit</button></li>
-          </ul>
+            <div className='ticket__header--content'>
+              <h1 className='ticket__title'>{`${ticket.title}`}</h1>
+              <p className='ticket__description'>{`created on ${formatDate(ticket.created_at)} by ${ticket.created_by}`}</p>
+            </div>
+            <ul className='ticket__header--actions'>
+              { isAdmin ? <li className='ticket__actions-item'><button className='button button--primary' onClick={() => this.setState({isDeleteModalVisible: true})}>Delete</button></li> : '' }
+              { isAdmin ? <li className='ticket__actions-item'><button className='button button--secondary-bounded' onClick={() => this.setState({isDuplicationModalVisible: true})}>Duplicate Ticket</button></li> : '' }
+              <li className='ticket__actions-item'><button className='button button--base' onClick={() => this.setState({isEditTicketModalVisible: true})}>Edit</button></li>
+            </ul>
           </header>
           <section className='ticket__body'>
-          <div className='ticket__status'>
-            <h2 className='inpage__label'>{`Status: ${ticketStatusLUT[ticket.status]}`}</h2>
-            <ul className='ticket__status-group'>
-              {statusKeys.map((status, i) => {
-                return <li className={c('ticket__status-bar', status, {'ticket__status-bar-empty': i > statusKeys.indexOf(ticket.status)})} key={`status-${status}`}></li>;
-              })}
-            </ul>
-          </div>
-          <div className='fields__group'>
-            <div className='profile-fields'>
-              <h2 className='field__title'>IP Contact Name</h2>
-            { isAdmin
-              ? <p className='field__description'><Link className='link--deco' to={`/partners/${ticket.ip_assigned_id}`}>{ticket.ticket_ip_name}</Link></p>
-              : <p className='field__description'>{ticket.ticket_ip_name}</p>
-            }</div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>IP Contact Address</h2>
-              <p className='field__description'>{ticket.ticket_ip_contact}</p>
+            <div className='ticket__status'>
+              <h2 className='inpage__label'>{`Status: ${ticketStatusLUT[ticket.status]}`}</h2>
+              <ul className='ticket__status-group'>
+                {statusKeys.map((status, i) => {
+                  return <li className={c('ticket__status-bar', status, {'ticket__status-bar-empty': i > statusKeys.indexOf(ticket.status)})} key={`status-${status}`}></li>;
+                })}
+              </ul>
             </div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>SP Contact Name</h2>
-            { isAdmin
-              ? <p className='field__description'><Link className='link--deco' to={`/service-providers/${ticket.sp_assigned_id}`}>{ticket.ticket_sp_name}</Link></p>
-              : <p className='field__description'>{ticket.ticket_ip_name}</p>
-            }</div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>SP Contact Address</h2>
-              <p className='field__description'>{ticket.ticket_sp_contact}</p>
-            </div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>Date of Incident</h2>
-              <p className='field__description'>{ticket.date_of_incident ? ticket.date_of_incident.substring(0, 10) : ''}</p>
-            </div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>Incident Type</h2>
-              <p className='field__description'>{ticket.incident_type.join(', ')}</p>
-            </div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>Description of Issue</h2>
-              <p className='field__description'>{ticket.description}</p>
-            </div>
-            <div className='profile-fields'>
-              <h2 className='field__title'>Steps Taken To Mitigate</h2>
-              <p className='field__description'>{ticket.steps_taken}</p>
-            </div>
-          </div>
-
-          <Threads
-            threads={this.props.threads}
-            ipName={ticket.ticket_ip_name}
-            spName={serviceProvider ? serviceProvider.name : ''}
-            roles={roles}
-            delete={messageID => this.props.dispatch(deleteMessage(messageID))}
-            create={(threadID, content) => {
-              if (content !== '') {
-                this.props.dispatch(createMessage(threadID, content));
+            <div className='fields__group'>
+              <div className='profile-fields'>
+                <h2 className='field__title'>IP Contact Name</h2>
+                { isAdmin
+                  ? <p className='field__description'><Link className='link--deco' to={`/partners/${ticket.ip_assigned_id}`}>{ticket.ticket_ip_name}</Link></p>
+                  : <p className='field__description'>{ticket.ticket_ip_name}</p>
+                }</div>
+              <div className='profile-fields'>
+                <h2 className='field__title'>IP Contact Address</h2>
+                <p className='field__description'>{ticket.ticket_ip_contact}</p>
+              </div>
+              { ticket.sp_assigned_id
+                ? <div className='profile-fields'>
+                  <h2 className='field__title'>SP Contact Name</h2>
+                  { isAdmin
+                    ? <p className='field__description'><Link className='link--deco' to={`/service-providers/${ticket.sp_assigned_id}`}>{ticket.ticket_sp_name}</Link></p>
+                    : <p className='field__description'>{ticket.ticket_ip_name}</p>
+                  }</div>
+                : ''
               }
-            }
-                   }
-          />
+              { ticket.sp_assigned_id
+                ? <div className='profile-fields'>
+                  <h2 className='field__title'>SP Contact Address</h2>
+                  <p className='field__description'>{ticket.ticket_sp_contact}</p>
+                </div>
+                : ''
+              }
+              <div className='profile-fields'>
+                <h2 className='field__title'>Date of Incident</h2>
+                <p className='field__description'>{ticket.date_of_incident ? ticket.date_of_incident.substring(0, 10) : ''}</p>
+              </div>
+              <div className='profile-fields'>
+                <h2 className='field__title'>Incident Type</h2>
+                <p className='field__description'>{ticket.incident_type.join(', ')}</p>
+              </div>
+              <div className='profile-fields'>
+                <h2 className='field__title'>Description of Issue</h2>
+                <p className='field__description'>{ticket.description}</p>
+              </div>
+              <div className='profile-fields'>
+                <h2 className='field__title'>Steps Taken To Mitigate</h2>
+                <p className='field__description'>{ticket.steps_taken}</p>
+              </div>
+            </div>
+
+            <Threads
+              threads={this.props.threads}
+              ipName={ticket.ticket_ip_name}
+              spName={serviceProvider ? serviceProvider.name : ''}
+              roles={roles}
+              delete={messageID => this.props.dispatch(deleteMessage(messageID))}
+              create={(threadID, content) => {
+                if (content !== '') {
+                  this.props.dispatch(createMessage(threadID, content));
+                }
+              }
+              }
+            />
           </section>
-         { isAdmin ? <aside className='ticket__sidebar'>
+          { isAdmin ? <aside className='ticket__sidebar'>
             <div className='sidebar__action'>
               <h2 className='sidebar__action--title heading--xsmall'>Service Provider</h2>
               <div className='assigned-sps'>
@@ -274,10 +283,10 @@ var TicketSingle = React.createClass({
                       isCreateGroupingModalVisible: true
                     })}>Create New Grouping</li>
                   </ul>
-                  </div>
                 </div>
               </div>
-            </aside> : ''}
+            </div>
+          </aside> : ''}
         </div>
       </div>
     );
@@ -294,7 +303,8 @@ const mapStateToProps = (state, ownProps) => {
     serviceProviders: serviceProviders.list,
     groupings: groupings.groupings,
     implementingPartners: implementingPartners.list,
-    threads: threads.threads
+    threads: threads.threads,
+    profile: state.auth.profile
   });
 };
 

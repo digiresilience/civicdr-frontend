@@ -123,6 +123,30 @@ var ProviderForm = React.createClass({
               </div>
 
               <div className='form__group'>
+                <label className='form__label-dark' htmlFor='form-email-notifications'>Would you like to receive email notifications for changes to ticket statuses or assignments?</label>
+                  <label className='form__option form__option--inline form__option--custom-radio'>
+                    <input
+                      type='radio'
+                      name='email_notification'
+                      required={true}
+                      value={true}
+                    />
+                    <span className='form__option__text'>Yes</span>
+                    <span className='form__option__ui'></span>
+                  </label>
+                  <label className='form__option form__option--inline form__option--custom-radio'>
+                    <input
+                      type='radio'
+                      name='email_notification'
+                      required={true}
+                      value={false}
+                    />
+                    <span className='form__option__text'>No</span>
+                    <span className='form__option__ui'></span>
+                  </label>
+              </div>
+
+              <div className='form__group'>
                 <label className='form__label-dark' htmlFor='form-start_time'>Start Time</label>
                 <p className='form__help'>The speed at which your organization/team is able to start new cases once they have been accepted. (You will be able to change this at any time to reflect your current capacity.)</p>
                 <select
@@ -239,6 +263,7 @@ var ProviderForm = React.createClass({
                         required={true}
                         name='rating'
                         value={rating}
+                        defaultChecked={rating === 3}
                       />
                       <span className='form__option__text'>{rating}</span>
                       <span className="form__option__ui"></span>

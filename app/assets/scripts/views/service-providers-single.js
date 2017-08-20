@@ -123,6 +123,10 @@ var ServiceProviderSingle = React.createClass({
                 <p className='field__description'>{provider.contact}</p>
               </div>
               <div className='profile-fields'>
+                <h2 className='field__title'>Recieve Email Alerts from Platform?</h2>
+                <p className='field__description'>{provider.email_notification ? 'Yes' : 'No'}</p>
+              </div>
+              <div className='profile-fields'>
                 <h2 className='field__title'>Available Secure Channels</h2>
                 <p className='field__description'>{provider.secure_channels.join(', ')}</p>
               </div>

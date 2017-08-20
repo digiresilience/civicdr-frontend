@@ -109,6 +109,32 @@ const ServiceProviderEdit = React.createClass({
                 name='contact'
                 defaultValue={this.props.existingServiceProvider.contact}
               />
+        </div>
+
+            <div className='form__group'>
+              <label className='form__label-dark' htmlFor='form-email-notifications'>Would you like to receive email notifications for changes to ticket statuses or assignments?</label>
+                <label className='form__option form__option--inline form__option--custom-radio'>
+                  <input
+                    type='radio'
+                    name='email_notification'
+                    required={true}
+                    value={true}
+                    defaultChecked={this.props.existingServiceProvider.email_notification}
+                  />
+                  <span className='form__option__text'>Yes</span>
+                  <span className='form__option__ui'></span>
+                </label>
+                <label className='form__option form__option--inline form__option--custom-radio'>
+                  <input
+                    type='radio'
+                    name='email_notification'
+                    required={true}
+                    value={false}
+                    defaultChecked={!this.props.existingServiceProvider.email_notification}
+                  />
+                  <span className='form__option__text'>No</span>
+                  <span className='form__option__ui'></span>
+                </label>
             </div>
 
             <div className='form__group'>

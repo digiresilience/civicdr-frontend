@@ -14,7 +14,8 @@ const TicketEdit = React.createClass({
     existingTicket: T.object,
     roles: T.array,
     implementingPartners: T.array,
-    router: T.object
+    router: T.object,
+    profile: T.object
   },
 
   handleClose: function (e) {
@@ -40,11 +41,20 @@ const TicketEdit = React.createClass({
     this.props.onSubmit(data);
   },
 
+  // Populate the default SP info depending upon the user
+  populateSPInfo: function (user) {
+    let info = {};
+    info.name = (user === 'SP') ? this.props.profile.name : '';
+    info.contact = (user === 'SP') ? this.props.profile.contact : '';
+    return info;
+  },
+
   render: function () {
     let roles = this.props.roles;
     let isAdmin = _.includes(roles, 'admin');
     let isSP = _.includes(roles, 'SP');
     let isIP = _.includes(roles, 'IP');
+    const SPinfo = isAdmin ? this.populateSPInfo('admin') : this.populateSPInfo('SP');
 
     return (
       // Use `key` here to force a form re-render once the async fetch of
@@ -58,7 +68,7 @@ const TicketEdit = React.createClass({
             {isAdmin
               ? <div className='form__group'>
                 <label className='form__label-dark'>Status</label>
-                  {_.map(ticketStatusLUT, (display, value) =>
+                {_.map(ticketStatusLUT, (display, value) =>
                   <label key={value} className="form__option form__option--inline form__option--custom-radio">
                     <input
                       type='radio'
@@ -78,15 +88,15 @@ const TicketEdit = React.createClass({
 
             {isAdmin
               ? <div className='form__group'>
-                  <label className='form__label-dark' htmlFor='form-ticket_title'>Title</label>
-                  <p className='form__help'>A short title that describes your incident.</p>
-                  <input
-                    type='text'
-                    id='form-ticket_title'
-                    required={true}
-                    className='form__control form__control--medium'
-                    name='title'
-                    ref={thisInput => { this.title = thisInput; }}
+                <label className='form__label-dark' htmlFor='form-ticket_title'>Title</label>
+                <p className='form__help'>A short title that describes your incident.</p>
+                <input
+                  type='text'
+                  id='form-ticket_title'
+                  required={true}
+                  className='form__control form__control--medium'
+                  name='title'
+                  ref={thisInput => { this.title = thisInput; }}
                   defaultValue={this.props.existingTicket.title}
                 />
               </div>
@@ -119,132 +129,132 @@ const TicketEdit = React.createClass({
               : ''
             }
 
-          {isAdmin || isIP
-            ? <div className='form__row'>
-              <div className='form__group'>
-           <label className='form__label-dark' htmlFor='form-ticket_ip_name'>Team Member Name</label>
-           <p className='form__help'>The member of your organization/team who will be managing this ticket. (Optional)</p>
-                <input
-                  type='text'
-                  id='form-ticket_ip_name'
-                  required={true}
-                  className='form__control form__control--medium'
-                  name='ticket_ip_name'
-                  ref={thisInput => { this.ticket_ip_name = thisInput; }}
-                  defaultValue={this.props.existingTicket.ticket_ip_name}
-                />
-              </div>
+            {isAdmin || isIP
+              ? <div className='form__row'>
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-ticket_ip_name'>Team Member Name</label>
+                  <p className='form__help'>The member of your organization/team who will be managing this ticket. (Optional)</p>
+                  <input
+                    type='text'
+                    id='form-ticket_ip_name'
+                    required={true}
+                    className='form__control form__control--medium'
+                    name='ticket_ip_name'
+                    ref={thisInput => { this.ticket_ip_name = thisInput; }}
+                    defaultValue={this.props.existingTicket.ticket_ip_name}
+                  />
+                </div>
 
-              <div className='form__group'>
-           <label className='form__label-dark' htmlFor='form-ticket_ip_contact'>Team Member E-mail</label>
-           <p className='form__help'>An alternative email address to use for notifications related to this ticket. (Optional)</p>
-                <input
-                  type='email'
-                  id='form-ticket_ip_contact'
-                  required={true}
-                  className='form__control form__control--medium'
-                  name='ticket_ip_contact'
-                  ref={thisInput => { this.ticket_ip_contact = thisInput; }}
-                  defaultValue={this.props.existingTicket.ticket_ip_contact}
-                />
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-ticket_ip_contact'>Team Member E-mail</label>
+                  <p className='form__help'>An alternative email address to use for notifications related to this ticket. (Optional)</p>
+                  <input
+                    type='email'
+                    id='form-ticket_ip_contact'
+                    required={true}
+                    className='form__control form__control--medium'
+                    name='ticket_ip_contact'
+                    ref={thisInput => { this.ticket_ip_contact = thisInput; }}
+                    defaultValue={this.props.existingTicket.ticket_ip_contact}
+                  />
+                </div>
               </div>
-            </div>
-            : ''
-          }
+              : ''
+            }
 
-          { isAdmin || isSP
-            ? <div className='form__row'>
-              <div className='form__group'>
-                <label className='form__label-dark' htmlFor='form-ticket_sp_name'>Service Provider Name for This Ticket</label>
-                <input
-                  type='text'
-                  id='form-ticket_sp_name'
-                  required={this.props.existingTicket.ticket_sp_name}
-                  className='form__control form__control--medium'
-                  name='ticket_sp_name'
-                  ref={thisInput => { this.ticket_sp_name = thisInput; }}
-                  defaultValue={this.props.existingTicket.ticket_sp_name}
-                />
-              </div>
+            { (isAdmin || isSP) && this.props.existingTicket.sp_assigned_id
+              ? <div className='form__row'>
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-ticket_sp_name'>Service Provider Name for This Ticket</label>
+                  <input
+                    type='text'
+                    id='form-ticket_sp_name'
+                    required={this.props.existingTicket.ticket_sp_name}
+                    className='form__control form__control--medium'
+                    name='ticket_sp_name'
+                    ref={thisInput => { this.ticket_sp_name = thisInput; }}
+                    defaultValue={(this.props.existingTicket.ticket_sp_name === '') ? SPinfo.name : this.props.existingTicket.ticket_sp_name}
+                  />
+                </div>
 
-              <div className='form__group'>
-                <label className='form__label-dark' htmlFor='form-ticket_sp_contact'>Service Provider Contact for This Ticket</label>
-                <input
-                  type='email'
-                  id='form-ticket_sp_contact'
-                  required={this.props.existingTicket.ticket_sp_contact}
-                  className='form__control form__control--medium'
-                  name='ticket_sp_contact'
-                  ref={thisInput => { this.ticket_sp_contact = thisInput; }}
-                  defaultValue={this.props.existingTicket.ticket_sp_contact}
-                />
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-ticket_sp_contact'>Service Provider Contact for This Ticket</label>
+                  <input
+                    type='email'
+                    id='form-ticket_sp_contact'
+                    required={this.props.existingTicket.ticket_sp_contact}
+                    className='form__control form__control--medium'
+                    name='ticket_sp_contact'
+                    ref={thisInput => { this.ticket_sp_contact = thisInput; }}
+                    defaultValue={(this.props.existingTicket.ticket_sp_contact === '') ? SPinfo.contact : this.props.existingTicket.ticket_sp_contact}
+                  />
+                </div>
               </div>
-            </div>
-            : ''
-          }
+              : ''
+            }
 
-          {isAdmin || isIP
-          ? <div>
-              <div className='form__group'>
-                <label className='form__label-dark' htmlFor='form-date_of_incident'>Date Incident was Identified</label>
-                <p className='form__help'>The date when the incident occurred or was identified by the Implementing Partner.</p>
-                <input
-                  type='date'
-                  id='form-date_of_incident'
-                  required={true}
-                  className='form__control form__control--medium'
-                  name='date_of_incident'
-                  defaultValue={this.props.existingTicket.date_of_incident.slice(0, 10)}
-                />
-              </div>
+            {isAdmin || isIP
+              ? <div>
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-date_of_incident'>Date Incident was Identified</label>
+                  <p className='form__help'>The date when the incident occurred or was identified by the Implementing Partner.</p>
+                  <input
+                    type='date'
+                    id='form-date_of_incident'
+                    required={true}
+                    className='form__control form__control--medium'
+                    name='date_of_incident'
+                    defaultValue={this.props.existingTicket.date_of_incident.slice(0, 10)}
+                  />
+                </div>
 
-              <div className='form__group checkboxes-light form__group--medium'>
-                <label className='form__label-dark'>Incident Type</label>
-                <p className='form__help'>The type of incident. (Choose all/any that apply.)</p>
-                {incidentTypes.map(type => (
-                  <label className='form__option form__option--custom-checkbox' key={'incident_type-' + type.name}>
-                    <input
-                      type='checkbox'
-                      name='incident_type'
-                      value={type.name}
-                      defaultChecked={this.props.existingTicket.incident_type.includes(type.name)}
-                    />
-                    <span className='form__option__text'>{type.name}</span>
-                    <span className='form__option__ui'></span>
-                  </label>
-                ))}
-              </div>
+                <div className='form__group checkboxes-light form__group--medium'>
+                  <label className='form__label-dark'>Incident Type</label>
+                  <p className='form__help'>The type of incident. (Choose all/any that apply.)</p>
+                  {incidentTypes.map(type => (
+                    <label className='form__option form__option--custom-checkbox' key={'incident_type-' + type.name}>
+                      <input
+                        type='checkbox'
+                        name='incident_type'
+                        value={type.name}
+                        defaultChecked={this.props.existingTicket.incident_type.includes(type.name)}
+                      />
+                      <span className='form__option__text'>{type.name}</span>
+                      <span className='form__option__ui'></span>
+                    </label>
+                  ))}
+                </div>
 
-              <div className='form__group'>
-                <label className='form__label-dark' htmlFor='form-description'>Description</label>
-                <p className='form__help'>Provide a brief description of the incident. (CiviCDR staff will follow up to collect more information.)</p>
-                <textarea
-                  id='form-description'
-                  className='form__control'
-                  rows='4'
-                  required={true}
-                  name='description'
-                  defaultValue={this.props.existingTicket.description}
-                >
-                </textarea>
-              </div>
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-description'>Description</label>
+                  <p className='form__help'>Provide a brief description of the incident. (CiviCDR staff will follow up to collect more information.)</p>
+                  <textarea
+                    id='form-description'
+                    className='form__control'
+                    rows='4'
+                    required={true}
+                    name='description'
+                    defaultValue={this.props.existingTicket.description}
+                  >
+                  </textarea>
+                </div>
 
-              <div className='form__group'>
-                <label className='form__label-dark' htmlFor='form-steps_taken'>Steps Taken to Mitigate</label>
-                <p className='form__help'>Provide information about any steps the affected parties have already taken to address the issue or protect themselves.</p>
-                <textarea
-                  id='form-steps_taken'
-                  className='form__control'
-                  rows='4'
-                  required={true}
-                  name='steps_taken'
-                  defaultValue={this.props.existingTicket.steps_taken}
-                >
-                </textarea>
+                <div className='form__group'>
+                  <label className='form__label-dark' htmlFor='form-steps_taken'>Steps Taken to Mitigate</label>
+                  <p className='form__help'>Provide information about any steps the affected parties have already taken to address the issue or protect themselves.</p>
+                  <textarea
+                    id='form-steps_taken'
+                    className='form__control'
+                    rows='4'
+                    required={true}
+                    name='steps_taken'
+                    defaultValue={this.props.existingTicket.steps_taken}
+                  >
+                  </textarea>
+                </div>
               </div>
-            </div>
-            : ''
-          }
+              : ''
+            }
             <footer className='form__footer'>
               <ul className='form__actions'>
                 <li className='form__actions-item'>
