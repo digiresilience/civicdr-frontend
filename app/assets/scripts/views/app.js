@@ -11,8 +11,16 @@ import c from 'classnames';
 
 import PageHeader from '../components/page-header';
 import PageFooter from '../components/page-footer';
-import { fetchProfile, removeErrors } from '../actions';
 import ErrorModal from '../components/error-modal';
+import AgreementModal from '../components/agreement-modal';
+
+import {
+  fetchProfile,
+  removeErrors,
+  hideAgreements,
+  displayPartnerAgreement,
+  displayCodeOfPractice
+} from '../actions';
 
 // Top-level application component
 // Just contains header, footer, and container for actual views
@@ -28,7 +36,8 @@ var App = React.createClass({
     roles: T.array,
     secret: T.string,
     router: T.object,
-    error: T.object
+    error: T.object,
+    agreement: T.object
   },
 
   componentDidMount: function () {
@@ -49,21 +58,39 @@ var App = React.createClass({
           profile={this.props.profile}
         />
         <main className="page__body" role="main">
-        <div style={{display: this.props.error.isErrorModalVisible ? 'block' : 'none'}}>
-          <ErrorModal
-            onLogout={() => {
-              this.props.dispatch(removeErrors());
-              this.props.router.push('/logout');
-            }}
-            onClose={() => {
-              this.props.dispatch(removeErrors());
-            }}
-            errorMsg={this.props.error.errorMsg}
-        />
-        </div>
+          <div style={{display: this.props.error.isErrorModalVisible ? 'block' : 'none'}}>
+            <ErrorModal
+              onLogout={() => {
+                this.props.dispatch(removeErrors());
+                this.props.router.push('/logout');
+              }}
+              onClose={() => {
+                this.props.dispatch(removeErrors());
+              }}
+              errorMsg={this.props.error.errorMsg}
+            />
+          </div>
+          <div style={{display: this.props.agreement.isAgreementModalVisible ? 'block' : 'none'}}>
+            <AgreementModal
+              onClose={() => {
+                this.props.dispatch(hideAgreements());
+              }}
+              agreementType={this.props.agreement.agreementType}
+            />
+          </div>
           {this.props.children}
         </main>
-        <PageFooter className={c({hidden})} />
+        <PageFooter
+          className={c({hidden})}
+          partnerAgreement={(e) => {
+            e.preventDefault();
+            this.props.dispatch(displayPartnerAgreement());
+          }}
+          codeOfPractice={(e) => {
+            e.preventDefault();
+            this.props.dispatch(displayCodeOfPractice());
+          }}
+        />
       </div>
     );
   }
@@ -78,7 +105,8 @@ const mapStateToProps = state => {
     roles: state.auth.roles,
     profile: state.auth.profile,
     secret: state.auth.secret,
-    error: state.errors
+    error: state.errors,
+    agreement: state.agreement
   };
 };
 

@@ -22,7 +22,7 @@
   @include media(medium-up) {
     font-size: $prose-resp-font-size;
     line-height: $prose-resp-line-height;
-  
+
     > * {
       margin-bottom: $prose-resp-font-size * $prose-resp-line-height; // same as line-height
     }
@@ -67,10 +67,20 @@ ol ol, ol ul, ul ol, ul ul {
 
 ul {
   list-style-type: disc;
+  list-style-position: inside;
 }
 
 ol {
   list-style-type: decimal;
+  list-style-position: inside;
+}
+
+li + ul {
+    margin-left: 1rem;
+}
+
+li + ol {
+    margin-left: 1rem;
 }
 
 dt {
@@ -247,7 +257,7 @@ abbr[title] {
   @include heading(1rem, xlarge-up);      // 16, 20, 24, 28
 }
 
-.heading--xsmall, 
+.heading--xsmall,
 .heading--xxsmall {
   @include heading(0.875rem, xlarge-up);
 }

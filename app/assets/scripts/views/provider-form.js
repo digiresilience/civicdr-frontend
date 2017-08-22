@@ -8,6 +8,7 @@ import React, { PropTypes as T } from 'react';
 import { connect } from 'react-redux';
 import formToObject from 'form-to-object';
 import _ from 'lodash';
+
 import {
   languages,
   serviceTypes,
@@ -18,7 +19,8 @@ import {
 
 import {
   createSpProfile,
-  fetchProfile
+  fetchProfile,
+  displayCodeOfPractice
 } from '../actions';
 
 // A form view to create new Service Providers
@@ -124,26 +126,26 @@ var ProviderForm = React.createClass({
 
               <div className='form__group'>
                 <label className='form__label-dark' htmlFor='form-email-notifications'>Would you like to receive email notifications for changes to ticket statuses or assignments?</label>
-                  <label className='form__option form__option--inline form__option--custom-radio'>
-                    <input
-                      type='radio'
-                      name='email_notification'
-                      required={true}
-                      value={true}
-                    />
-                    <span className='form__option__text'>Yes</span>
-                    <span className='form__option__ui'></span>
-                  </label>
-                  <label className='form__option form__option--inline form__option--custom-radio'>
-                    <input
-                      type='radio'
-                      name='email_notification'
-                      required={true}
-                      value={false}
-                    />
-                    <span className='form__option__text'>No</span>
-                    <span className='form__option__ui'></span>
-                  </label>
+                <label className='form__option form__option--inline form__option--custom-radio'>
+                  <input
+                    type='radio'
+                    name='email_notification'
+                    required={true}
+                    value={true}
+                  />
+                  <span className='form__option__text'>Yes</span>
+                  <span className='form__option__ui'></span>
+                </label>
+                <label className='form__option form__option--inline form__option--custom-radio'>
+                  <input
+                    type='radio'
+                    name='email_notification'
+                    required={true}
+                    value={false}
+                  />
+                  <span className='form__option__text'>No</span>
+                  <span className='form__option__ui'></span>
+                </label>
               </div>
 
               <div className='form__group'>
@@ -255,7 +257,7 @@ var ProviderForm = React.createClass({
               {isAdmin
                 ? <div className='form__group'>
                   <label className='form__label-dark'>Rating</label>
-                    {[1, 2, 3, 4, 5].map(rating =>
+                  {[1, 2, 3, 4, 5].map(rating =>
                     <label key={rating} className="form__option form__option--inline form__option--custom-radio">
                       <input
                         type='radio'
@@ -269,6 +271,39 @@ var ProviderForm = React.createClass({
                       <span className="form__option__ui"></span>
                     </label>
                   )}
+                </div>
+                : ''
+              }
+
+              {!isAdmin
+                ? <div className='form__group checkboxes-light form__group--medium'>
+                  <label className='form__label-dark'>Code of Practice</label>
+                  <p className='form__help'>You must read and agree to the terms of CiviCDRs {' '}
+                    <a href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.props.dispatch(displayCodeOfPractice());
+                      }}>
+               Code of Practice
+                    </a> to create an account on this platform.</p>
+                  <label className='form__option agreement_checkboxes form__option--custom-checkbox' key='code-of-conduct'>
+                    <input
+                      type='checkbox'
+                      name='code_of_practice'
+                      required={true}
+                      value={true}
+                    />
+                    <span className='form__option__text'>I have read and agree to the {' '}
+                      <a href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          this.props.dispatch(displayCodeOfPractice());
+                        }}>
+                        Code of Practice.
+                      </a>
+                    </span>
+                    <span className='form__option__ui'></span>
+                  </label>
                 </div>
                 : ''
               }

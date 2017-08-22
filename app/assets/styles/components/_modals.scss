@@ -335,3 +335,25 @@
     }
   }
 }
+
+/* Agreement Modal
+   ========================================================================== */
+.agreement-modal .modal__inner {
+  width: 100%;
+  @include media(medium-up) {
+    width: 55%;
+  }
+}
+
+.agreement__title {
+  font-weight: $base-font-bold;
+}
+
+.agreement__content {
+  text-align: left;
+  margin-bottom: $global-spacing * 2;
+}
+
+.form__group--medium .form__option.agreement_checkboxes {
+  width: 80%;
+}
