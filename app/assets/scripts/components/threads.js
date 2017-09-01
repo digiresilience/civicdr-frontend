@@ -33,9 +33,25 @@ class Threads extends React.Component {
     return (
       <section className='threads__container'>
         <ul className='threads__nav'>
-          {note ? <li className={'threads__item' + (this.state.visibleThread === 'note' ? ' threads__item--active' : '')}><a className='link--deco' onClick={() => this.setState({visibleThread: 'note'})}>Notes</a></li> : ''}
-          {ipThread ? <li className={'threads__item' + (this.state.visibleThread === 'ip' ? ' threads__item--active' : '')}><a className='link--deco' onClick={() => this.setState({visibleThread: 'ip'})}>{isAdmin ? 'IP Thread' : 'Comments to CiviCDR'}</a></li> : '' }
-          {spThread ? <li className={'threads__item' + (this.state.visibleThread === 'sp' ? ' threads__item--active' : '')}><a className='link--deco' onClick={() => this.setState({visibleThread: 'sp'})}>{isAdmin ? 'SP Thread' : 'Comments to CiviCDR'}</a></li> : '' }
+          {note ? <li className={'threads__item' + (this.state.visibleThread === 'note' ? ' threads__item--active' : '')}>
+            <a className='link--deco'
+              onClick={() => {
+                this.newMessageField.value = '';
+                this.setState({visibleThread: 'note'});
+              }}>Notes</a></li> : ''}
+          {ipThread ? <li className={'threads__item' + (this.state.visibleThread === 'ip' ? ' threads__item--active' : '')}>
+            <a className='link--deco'
+              onClick={() => {
+                this.newMessageField.value = '';
+                this.setState({visibleThread: 'ip'});
+              }}>
+              {isAdmin ? 'IP Thread' : 'Comments to CiviCDR'}</a></li> : '' }
+          {spThread ? <li className={'threads__item' + (this.state.visibleThread === 'sp' ? ' threads__item--active' : '')}>
+            <a className='link--deco' onClick={() => {
+              this.newMessageField.value = '';
+              this.setState({visibleThread: 'sp'});
+            }}>
+              {isAdmin ? 'SP Thread' : 'Comments to CiviCDR'}</a></li> : '' }
         </ul>
 
         {visibleThread
@@ -61,20 +77,20 @@ class Threads extends React.Component {
             })}
 
             <div className='add__thread-content'>
-         <textarea
-           ref={newMessageField => { this.newMessageField = newMessageField; }}
-           className="form__control add"
-           id="form-textarea-1"
-           rows="4"
-         >
-         </textarea>
-            <button
-             className='button button--large button--base'
-             onClick={() => {
-               this.props.create(visibleThread.id, this.newMessageField.value);
-               this.newMessageField.value = '';
-             }
-                     }>Comment</button>
+              <textarea
+                ref={newMessageField => { this.newMessageField = newMessageField; }}
+                className="form__control add"
+                id="form-textarea-1"
+                rows="4"
+              >
+              </textarea>
+              <button
+                className='button button--large button--base'
+                onClick={() => {
+                  this.props.create(visibleThread.id, this.newMessageField.value);
+                  this.newMessageField.value = '';
+                }
+                }>Comment</button>
             </div>
           </div>
           : ''
