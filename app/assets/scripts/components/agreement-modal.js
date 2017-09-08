@@ -45,8 +45,10 @@ var AgreementModal = React.createClass({
                     stakeholders in an incident as much as possible without
                     turning the incident information into void information, not
                     useable for incident handling by the receiving party.
-                    Incident information (other than number and type of
-                    incidents) will be deleted once ticket is closed.
+                    Incident information (other than number and type of incidents)
+                    will be deleted from the platform once ticket is closed. It
+                    will stay in the backup system (for disaster/recovery purpose)
+                    and will be kept there for a week before being purged.
                 </p>
                 <p>
                     Private incident information will never be shared with
