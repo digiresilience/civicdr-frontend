@@ -6,7 +6,8 @@ import {
   GET_TICKET_SINGLE,
   UPDATE_TICKET_SP,
   REMOVE_TICKET_SP,
-  REMOVE_TICKET_GROUPING
+  REMOVE_TICKET_GROUPING,
+  CLEAR_TICKET
 } from '../actions';
 
 export const initialState = {
@@ -32,6 +33,9 @@ export default (state = initialState, action) => {
     case REMOVE_TICKET_GROUPING:
       newState.ticket.groupings = newState.ticket.groupings
         .filter(g => g.grouping_id !== action.data.groupingID);
+      break;
+    case CLEAR_TICKET:
+      newState.ticket = {};
       break;
   }
   return newState;
