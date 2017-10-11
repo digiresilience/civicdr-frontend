@@ -11,6 +11,7 @@ export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 
 export const GET_TICKETS = 'GET_TICKETS';
 export const GET_TICKET_SINGLE = 'GET_TICKET_SINGLE';
+export const CLEAR_TICKET = 'CLEAR_TICKET';
 export const REMOVE_TICKETS = 'REMOVE_TICKETS';
 export const UPDATE_TICKET_SP = 'UPDATE_TICKET_SP';
 export const REMOVE_TICKET_SP = 'REMOVE_TICKET_SP';
@@ -159,6 +160,10 @@ export const fetchTicketSingle = ticketID => {
 
 export const removeTickets = ticketIDs => {
   return { type: REMOVE_TICKETS, ticketIDs };
+};
+
+export const clearTicket = () => {
+  return { type: CLEAR_TICKET };
 };
 
 export const deleteTickets = (ids, redirect) => {

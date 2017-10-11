@@ -22,6 +22,7 @@ import {
   removeGroupingFromTicket,
   removeSPFromTicket,
   fetchTicketThreads,
+  clearTicket,
   deleteMessage,
   createMessage,
   deleteTickets,
@@ -73,13 +74,17 @@ var TicketSingle = React.createClass({
 
   componentWillMount: function () {
     const isAdmin = _.includes(this.props.roles, 'admin');
-
     this.props.dispatch(fetchTicketSingle(this.props.routeParams.ticketId));
     this.props.dispatch(fetchTicketThreads(this.props.routeParams.ticketId));
     if (isAdmin) {
       this.props.dispatch(fetchGroupings());
       this.props.dispatch(fetchImplementingPartners());
     }
+  },
+
+  componentWillUnmount: function () {
+    this.props.ticket = {};
+    this.props.dispatch(clearTicket());
   },
 
   onAddGrouping: function (groupingID) {
@@ -109,7 +114,7 @@ var TicketSingle = React.createClass({
                 this.setState({isEditTicketModalVisible: false});
               }}
               roles={roles}
-              existingTicket={ticket}
+              existingTicket={this.props.ticket}
               implementingPartners={this.props.implementingPartners}
               profile={hasProfile ? this.props.profile : {}}
             />
@@ -297,15 +302,15 @@ var TicketSingle = React.createClass({
 // Connect functions
 
 const mapStateToProps = (state, ownProps) => {
-  const { groupings, ticketSingle, serviceProviders, implementingPartners, threads } = state;
-  return Object.assign({}, ticketSingle, {
+  return {
     roles: state.auth.roles,
-    serviceProviders: serviceProviders.list,
-    groupings: groupings.groupings,
-    implementingPartners: implementingPartners.list,
-    threads: threads.threads,
-    profile: state.auth.profile
-  });
+    serviceProviders: state.serviceProviders.list,
+    groupings: state.groupings.groupings,
+    implementingPartners: state.implementingPartners.list,
+    threads: state.threads.threads,
+    profile: state.auth.profile,
+    ticket: state.ticketSingle.ticket
+  };
 };
 
 export default connect(mapStateToProps)(TicketSingle);
