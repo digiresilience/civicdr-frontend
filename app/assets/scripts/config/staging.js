@@ -7,5 +7,5 @@ module.exports = {
   baseUrl: 'https://civicdr-api-staging.herokuapp.com/',
   clientId: 'vmv4I65vqUavxHr7yeD5Gxor2wqZIBD5',
   domain: 'civicdr.auth0.com',
-  clientUrl: 'http://community-civicdr-org.s3-website-us-east-1.amazonaws.com/'
+  clientUrl: 'https://staging.civicdr.org'
 };
