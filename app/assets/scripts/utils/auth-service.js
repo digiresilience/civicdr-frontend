@@ -86,16 +86,17 @@ export default class AuthService {
     this.auth0.resumeAuth(
       hash,
       (err, authResult) => {
-        // Check the state param to ensure it is correct
-        if (!this.checkSecret(authResult.state)) {
-          this.store.dispatch(updateSecretStatus('Bad secret returned from Auth0. CSRF protections enabled.'));
-        // Won't get here (set token) if the state param is not properly set.
+        // Check if authentication failed
+        if (err) {
+          this.store.dispatch(updateTokenStatus(err));
         } else {
-          this.setToken(authResult.idToken);
-          this.store.dispatch(updateTokenStatus(null, authResult.idToken));
-          // Check if authentication failed
-          if (err || (authResult && authResult.error)) {
-            this.store.dispatch(updateTokenStatus(authResult.error));
+          // Check the state param to ensure it is correct
+          if (!this.checkSecret(authResult.state)) {
+            this.store.dispatch(updateSecretStatus('Bad secret returned from Auth0. CSRF protections enabled.'));
+            // Won't get here (set token) if the state param is not properly set.
+          } else {
+            this.setToken(authResult.idToken);
+            this.store.dispatch(updateTokenStatus(null, authResult.idToken));
           }
         }
       }
