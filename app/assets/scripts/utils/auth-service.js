@@ -68,7 +68,7 @@ export default class AuthService {
         auth: {
           autoParseHash: false,
           redirectUrl: clientUrl,
-          responseType: 'token',
+          responseType: 'token id_token',
           sso: false,
           params: {
             scope: 'openid roles',
