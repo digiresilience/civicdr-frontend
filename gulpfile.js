@@ -59,8 +59,14 @@ gulp.task('default', ['clean'], function () {
 gulp.task('serve', ['vendorScripts', 'javascript', 'styles', 'fonts'], function () {
   browserSync({
     port: 3000,
+    host: '172.28.128.3',
+    cors: true,
     server: {
       baseDir: ['.tmp', 'app'],
+      middleware: function (req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', 'https://dsx-cdr-demo.eu.auth0.com');
+        next();
+      },
       routes: {
         '/node_modules': './node_modules'
       }
