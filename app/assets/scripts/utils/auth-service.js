@@ -9,7 +9,7 @@
  * that encodes the user roles (IP, SP, Admin) as well as an 'openid' that identifies the user
  */
 
-import Auth0Lock from 'auth0-lock';
+import Auth0 from 'auth0-js';
 import decode from 'jwt-decode';
 
 import {updateTokenStatus, updateSecretStatus, logoutSuccess} from '../actions/index';
@@ -48,11 +48,14 @@ function isTokenExpired (token) {
 export function getRolesFromToken (token) {
   const decoded = decode(token);
 
-  if (!decoded.roles) {
+  const ns = 'https://digiresilience.org/link/';
+  const nsRoles = ns + 'roles';
+
+  if (!decoded[nsRoles]) {
     return null;
   }
 
-  return decoded.roles;
+  return decoded[nsRoles];
 }
 
 export default class AuthService {
@@ -61,50 +64,38 @@ export default class AuthService {
       this.newSecret();
     }
     const secret = this.getSecret();
-    this.auth0 = new Auth0Lock(
+    this.auth0 = new Auth0.WebAuth({
       clientID,
       domain,
-      {
-        auth: {
-          autoParseHash: false,
-          redirectUrl: clientUrl,
-          responseType: 'token id_token',
-          sso: false,
-          params: {
-            scope: 'openid roles',
-            state: secret
-          }
-        }
-      }
-    );
+      redirectUri: clientUrl,
+      responseType: 'token id_token',
+      state: secret,
+    });
 
     this.store = store;
   }
 
   parseHash (hash) {
     // complete the authentication flow
-    this.auth0.resumeAuth(
-      hash,
-      (err, authResult) => {
-        // Check if authentication failed
-        if (err) {
-          this.store.dispatch(updateTokenStatus(err));
+    this.auth0.parseHash({ hash }, (err, authResult) => {
+      // Check if authentication failed
+      if (err) {
+        this.store.dispatch(updateTokenStatus(err));
+      } else if (authResult && authResult.accessToken && authResult.idToken) {
+        // Check the state param to ensure it is correct
+        if (!this.checkSecret(authResult.state)) {
+          this.store.dispatch(updateSecretStatus('Bad secret returned from Auth0. CSRF protections enabled.'));
+          // Won't get here (set token) if the state param is not properly set.
         } else {
-          // Check the state param to ensure it is correct
-          if (!this.checkSecret(authResult.state)) {
-            this.store.dispatch(updateSecretStatus('Bad secret returned from Auth0. CSRF protections enabled.'));
-            // Won't get here (set token) if the state param is not properly set.
-          } else {
-            this.setToken(authResult.idToken);
-            this.store.dispatch(updateTokenStatus(null, authResult.idToken));
-          }
+          this.setToken(authResult.idToken);
+          this.store.dispatch(updateTokenStatus(null, authResult.idToken));
         }
       }
-    );
+    });
   }
 
   showLock () {
-    this.auth0.show();
+    this.auth0.authorize();
   }
 
   loggedIn () {
