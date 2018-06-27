@@ -321,12 +321,9 @@ var AgreementModal = React.createClass({
                 <p>
                     If you are being harassed, notice that someone else is being
                     harassed, or have any other concerns, please notify{' '}
-                  <a href="mailto:holly@smallmedia.org.uk">
-                      holly@smallmedia.org.uk
-                  </a>{' '}
-                    or, if more appropriate{' '}
-                  <a href="fereidoon@asl19.org">fereidoon@asl19.org</a>.
-                    Reports are confidential. You will not be asked to take
+                  <a href="mailto:holly@digiresilience.org">
+                    holly@digiresilience.org
+                  </a>. Reports are confidential. You will not be asked to take
                     actions that make you feel unsafe.
                 </p>
                 <p>

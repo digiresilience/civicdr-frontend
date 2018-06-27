@@ -174,7 +174,7 @@ gulp.task('collecticons', function (done) {
     '--style-name', 'collecticons',
     '--class-name', 'collecticons',
     '--author-name', 'CiviCDR',
-    '--author-url', 'https://CiviCDR.org/',
+    '--author-url', 'https://digiresilience.org/',
     '--no-preview'
   ];
 
