@@ -58,6 +58,14 @@ The site will automatically refresh since it is bundled with livereload.
 To prepare the app for deployment run:
 
 ```
+
+# production
+DS_ENV=production yarn run build
+
+# staging
+DS_ENV=staging yarn run build
+
+# local - WARNING, if local.js exists, the env will ALWAYS be local
 yarn run build
 ```
 
